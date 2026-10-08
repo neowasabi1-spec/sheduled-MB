@@ -3,6 +3,11 @@
   command = "echo 'static site - no build step'"
   publish = "."
 
+# Il progetto Netlify ha il plugin Next.js installato dalla UI (ereditato dal
+# vecchio progetto): questa variabile gli dice di non fare nulla.
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
 # Sito statico: nessuna build. Niente cache aggressiva così gli aggiornamenti
 # (incluso config.js) arrivano subito a tutti i buyer.
 [[headers]]
