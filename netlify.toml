@@ -1,4 +1,6 @@
 [build]
+  # Sito statico: sovrascrive l'eventuale "npm run build" impostato nella UI di Netlify
+  command = "echo 'static site - no build step'"
   publish = "."
 
 # Sito statico: nessuna build. Niente cache aggressiva così gli aggiornamenti
