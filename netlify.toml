@@ -1,0 +1,9 @@
+[build]
+  publish = "."
+
+# Sito statico: nessuna build. Niente cache aggressiva così gli aggiornamenti
+# (incluso config.js) arrivano subito a tutti i buyer.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

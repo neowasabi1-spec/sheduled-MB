@@ -1,0 +1,829 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Offer Schedule - Media Buyer</title>
+<style>
+ :root{--bg:#f4f6fb;--panel:#ffffff;--panel2:#f7f9fc;--line:#dde3ec;--txt:#1a2230;--mut:#6b7686;--red:#e1251b;--blue:#2f7fe0;}
+ *{box-sizing:border-box;}
+ body{background:var(--bg);color:var(--txt);
+   font-family:'Inter',-apple-system,Segoe UI,Roboto,sans-serif;margin:0;padding:34px 30px 60px;}
+ .top{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:26px;}
+ h1{margin:0;font-size:30px;letter-spacing:-.5px;color:var(--txt);}
+ .sub{color:var(--mut);margin-top:6px;font-size:14px;}
+ .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:30px;}
+ @media(max-width:720px){.cards{grid-template-columns:repeat(2,1fr);}}
+ .card{background:var(--panel);border:1px solid var(--line);
+   border-radius:16px;padding:18px 20px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,50,.05);}
+ .card::after{content:'';position:absolute;right:-20px;top:-20px;width:80px;height:80px;border-radius:50%;background:var(--red);opacity:.1;}
+ .card .v{font-size:30px;font-weight:800;letter-spacing:-1px;}
+ .card .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
+ .card.b2::after{background:var(--blue);} .card.b3::after{background:#e0920a;} .card.b4::after{background:#1ca45a;}
+ h2{font-size:17px;margin:34px 0 14px;display:flex;align-items:center;gap:10px;}
+ h2::before{content:'';width:4px;height:18px;background:var(--red);border-radius:3px;}
+ .wrap{overflow:auto;max-height:78vh;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:0 1px 3px rgba(20,30,50,.05);}
+ table{border-collapse:separate;border-spacing:14px 0;width:100%;font-size:12.5px;min-width:900px;}
+ thead th{background:#e8eef7;color:var(--txt);padding:12px 10px;position:sticky;top:0;z-index:5;
+   border-bottom:2px solid var(--line);text-align:center;font-weight:600;border-radius:8px 8px 0 0;
+   box-shadow:0 2px 6px rgba(20,30,50,.08);}
+ thead th:first-child{text-align:left;}
+ thead th:not(:first-child){width:26%;}
+ td.day{width:70px;}
+ .bav{display:inline-flex;width:24px;height:24px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;
+   align-items:center;justify-content:center;margin-right:7px;vertical-align:middle;}
+ .bnm{vertical-align:middle;}
+ tbody td{padding:7px;border-bottom:1px solid #eef1f6;vertical-align:top;}
+ tr.wk{background:#fdecec;}
+ td.day{white-space:nowrap;padding:10px 12px;background:#eef0fb;border-radius:8px;}
+ thead th:first-child{background:#e4e7f6;}
+ .dow{display:block;color:#6a6fa0;font-size:11px;} .dnum{font-weight:700;font-size:14px;color:#3a3f74;}
+ .chip{display:block;text-decoration:none;color:var(--txt);background:var(--panel2);border:1px solid var(--line);
+   border-radius:10px;padding:8px 10px;transition:.15s;min-height:54px;}
+ .chip:hover{border-color:var(--blue);transform:translateY(-1px);box-shadow:0 3px 10px rgba(20,30,50,.1);}
+ .oid{color:var(--mut);font-size:11px;font-weight:700;margin-right:5px;}
+ .onm{font-weight:600;display:inline;}
+ .fc{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;
+   background:rgba(47,127,224,.12);color:var(--blue);}
+ .fc.one{background:rgba(138,147,168,.15);color:var(--mut);}
+ .chip{cursor:pointer;font-family:inherit;width:100%;text-align:left;}
+ .cell{position:relative;}
+ .chk{position:absolute;top:8px;right:8px;z-index:3;width:18px;height:18px;cursor:pointer;accent-color:#28c76f;margin:0;}
+ .cell .chip{padding-right:52px;}
+ .edit-btn{position:absolute;top:8px;right:30px;z-index:3;width:20px;height:20px;padding:0;
+   background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:6px;
+   font-size:11px;line-height:1;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;}
+ .edit-btn:hover{border-color:#e0920a;color:#e0920a;}
+ /* slot multipli per cella */
+ .slots{display:flex;flex-direction:column;gap:6px;}
+ .slot{position:relative;}
+ .slot .chip{padding-right:74px;}
+ .slot .chk{position:absolute;top:8px;right:8px;z-index:3;width:18px;height:18px;cursor:pointer;accent-color:#28c76f;margin:0;}
+ .rm-btn{position:absolute;top:8px;right:52px;z-index:3;width:20px;height:20px;padding:0;
+   background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:6px;
+   font-size:12px;line-height:1;cursor:pointer;transition:.15s;display:none;align-items:center;justify-content:center;}
+ .rm-btn:hover{border-color:var(--red);color:var(--red);}
+ .slot.extra .rm-btn{display:flex;}
+ .add-btn{margin-top:6px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--mut);
+   border-radius:9px;padding:5px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
+ .add-btn:hover{border-color:var(--blue);color:var(--blue);background:rgba(47,127,224,.07);}
+ /* link Everflow dentro la card */
+ .offlink-in{display:block;width:-moz-fit-content;width:fit-content;margin-top:5px;font-size:10px;font-weight:700;color:var(--blue);
+   background:rgba(47,127,224,.1);border:1px solid rgba(47,127,224,.35);border-radius:6px;
+   padding:2px 7px;cursor:pointer;letter-spacing:.2px;}
+ .offlink-in:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+ /* weekend bloccato (rosso) */
+ .cell.blocked{display:flex;align-items:center;justify-content:center;min-height:54px;
+   background:repeating-linear-gradient(45deg,#fbe3e2,#fbe3e2 8px,#f7d4d2 8px,#f7d4d2 16px);
+   border:1px solid #f0b4b0;border-radius:10px;}
+ .blocked-lbl{color:var(--red);font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
+ tr.wk td.day .dnum,tr.wk td.day .dow{color:var(--red);}
+ /* picker offerta */
+ .picker{position:fixed;z-index:200;width:340px;max-width:92vw;background:var(--panel);
+   border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px rgba(20,30,50,.22);padding:10px;display:none;}
+ .picker.open{display:block;animation:pop .14s ease;}
+ .picker .psrch{width:100%;background:#f3f6fb;border:1px solid var(--line);color:var(--txt);border-radius:9px;
+   padding:9px 11px;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px;}
+ .picker .psrch:focus{border-color:var(--blue);}
+ .picker .plist{max-height:280px;overflow-y:auto;}
+ .picker .pitem{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:8px;cursor:pointer;font-size:12.5px;}
+ .picker .pitem:hover,.picker .pitem.sel{background:rgba(47,127,224,.12);}
+ .picker .pitem .pid{color:var(--mut);font-weight:700;font-size:11px;min-width:30px;}
+ .picker .pitem .pnm{flex:1;}
+ .picker .pitem .pfc{font-size:10px;color:var(--mut);}
+ .picker .pitem.manualrow{border-top:1px solid var(--line);margin-top:4px;color:#d07c00;font-weight:600;}
+ .picker .pitem.scheduled{background:rgba(28,164,90,.12);}
+ .picker .pitem.scheduled:hover{background:rgba(28,164,90,.2);}
+ .picker .pitem .ptag{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(28,164,90,.18);color:#1ca45a;white-space:nowrap;}
+ .picker .pitem.current .pnm{color:var(--blue);}
+ .picker .pitem.current .ptag{background:rgba(47,127,224,.18);color:var(--blue);}
+ .picker .phint{font-size:10.5px;color:var(--mut);padding:2px 4px 8px;}
+ .picker .pempty{padding:14px;text-align:center;color:var(--mut);font-size:12px;}
+ .picker .phd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+ .picker .phd b{font-size:12px;color:var(--txt);} .picker .phd .px{cursor:pointer;color:var(--mut);background:none;border:none;font-size:16px;}
+ /* stato lanciata (per slot) */
+ .slot.done .chip{border-color:#1ca45a;background:rgba(28,164,90,.12);padding-bottom:18px;}
+ .slot.done .onm{text-decoration:line-through;text-decoration-color:rgba(28,164,90,.6);}
+ .slot.done::before{content:'✓ launched';position:absolute;bottom:6px;left:10px;font-size:9.5px;font-weight:700;color:#1ca45a;letter-spacing:.3px;z-index:1;}
+ .chk{accent-color:#1ca45a;} .slot .chk{accent-color:#1ca45a;}
+ /* modal */
+ .ov{position:fixed;inset:0;background:rgba(3,5,10,.72);backdrop-filter:blur(4px);display:none;
+   align-items:center;justify-content:center;z-index:50;padding:20px;}
+ .ov.open{display:flex;}
+ .modal{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);
+   border-radius:18px;padding:22px 24px;max-width:680px;width:100%;max-height:86vh;overflow-y:auto;
+   box-shadow:0 30px 80px #000a;animation:pop .18s ease;}
+ @keyframes pop{from{transform:scale(.95);opacity:0;}to{transform:scale(1);opacity:1;}}
+ .mhead{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+ .mhead h3{margin:0;font-size:18px;flex:1;}
+ .obadge{background:#0c0f17;border:1px solid var(--line);color:var(--mut);font-weight:700;font-size:12px;padding:3px 9px;border-radius:8px;}
+ .otag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+ .otag.multi{background:rgba(59,163,255,.15);color:var(--blue);}
+ .otag.single{background:rgba(138,147,168,.15);color:var(--mut);}
+ .mx{background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:9px;
+   width:34px;height:34px;cursor:pointer;font-size:18px;transition:.15s;}
+ .mx:hover{border-color:var(--red);color:var(--red);}
+ .flow{border-top:1px solid #171c28;padding:11px 0;}
+ .fname{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+ .fnum{background:var(--red);color:#fff;width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+ .url{display:flex;gap:8px;align-items:center;}
+ .url code{flex:1;font-size:10.5px;color:#9fc0ff;background:#0a0d14;border:1px solid var(--line);border-radius:7px;padding:5px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ .cpy{background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:7px;padding:5px 10px;font-size:11px;cursor:pointer;transition:.15s;}
+ .cpy:hover{border-color:var(--blue);color:var(--blue);} .cpy.ok{color:#28c76f;border-color:#28c76f;}
+ /* drag & drop */
+ .chip{touch-action:none;}
+ .chip:active{cursor:grabbing;}
+ .cell.dragging .chip{opacity:.4;border-style:dashed;}
+ .cell.dragover{outline:2px dashed var(--blue);outline-offset:-2px;border-radius:12px;background:rgba(47,127,224,.08);}
+ .chip .grip{display:inline-block;color:var(--mut);font-size:12px;margin-right:4px;cursor:grab;vertical-align:middle;opacity:.5;}
+ .chip:hover .grip{opacity:1;}
+ .hint{color:var(--mut);font-size:12px;margin:-6px 0 16px;}
+ .hint b{color:var(--blue);}
+ .resetbtn{background:var(--panel);border:1px solid var(--line);color:var(--mut);border-radius:9px;padding:6px 12px;font-size:12px;cursor:pointer;transition:.15s;}
+ .resetbtn:hover{border-color:var(--red);color:var(--red);}
+ /* editing manuale */
+ .chip.manual{border-color:#e0920a;background:rgba(224,146,10,.1);}
+ .chip.manual .fc{background:rgba(224,146,10,.16);color:#c07e08;}
+ .chip.manual .oid{color:#c07e08;}
+ .chip .onm[contenteditable]{outline:none;}
+ .slot.editing .chip{border-color:var(--blue);box-shadow:0 0 0 2px rgba(47,127,224,.3);cursor:text;}
+ .slot.editing .onm{background:#eef3fb;border-radius:5px;padding:1px 5px;min-width:30px;display:inline-block;}
+
+ .filterbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:-4px 0 16px;}
+ .filterbar select{background:var(--panel);border:1px solid var(--line);color:var(--txt);border-radius:9px;
+   padding:8px 12px;font-size:13px;font-family:inherit;outline:none;cursor:pointer;}
+ .filterbar select:focus{border-color:var(--blue);}
+ .navbtn{background:var(--panel);border:1px solid var(--line);color:var(--mut);border-radius:9px;
+   padding:8px 14px;font-size:13px;font-family:inherit;cursor:pointer;transition:.15s;}
+ .navbtn:hover{border-color:var(--blue);color:var(--blue);}
+ #todayM{border-color:var(--blue);color:var(--blue);font-weight:700;}
+ #todayM:hover{background:rgba(47,127,224,.1);}
+ /* riga di OGGI: evidenzia TUTTA la riga del giorno */
+ tr.today{background:rgba(47,127,224,.09);}
+ tr.today td{background:rgba(47,127,224,.09);border-top:2px solid var(--blue);border-bottom:2px solid var(--blue);}
+ tr.today td:first-child{border-left:2px solid var(--blue);border-radius:8px 0 0 8px;}
+ tr.today td:last-child{border-right:2px solid var(--blue);border-radius:0 8px 8px 0;}
+ tr.today td.day{position:relative;}
+ tr.today td.day .dnum{color:var(--blue);}
+ tr.today td.day .dow::after{content:' \00b7 TODAY';font-size:8.5px;font-weight:800;color:var(--blue);letter-spacing:.5px;}
+ /* badge stato sincronizzazione Supabase */
+ .sync{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;
+   background:#eef1f6;color:var(--mut);margin-left:10px;vertical-align:middle;}
+ .sync::before{content:'';width:8px;height:8px;border-radius:50%;background:#aab0bd;}
+ .sync.ok::before{background:#1ca45a;} .sync.busy::before{background:#e0920a;} .sync.local::before{background:#aab0bd;}
+ .sync.err{background:#fdecec;color:var(--red);} .sync.err::before{background:var(--red);}
+</style></head><body>
+<div class="top">
+ <div><h1>Offer Schedule · Media Buyer</h1>
+ <div class="sub">Wasabi Network · 1 offer/day per buyer · staggered rotation · start 08/10/2026 <span id="syncBadge" class="sync busy">Loading…</span></div></div>
+ <button class="resetbtn" id="resetBtn">↺ Reset order</button>
+</div>
+<div class="hint">Drag to <b>swap</b> offers. <b>✎</b> = pick from list / type a name. <b>+ add offer</b> = more offers the same day. The <b>↗ Everflow</b> badge opens the offer in Everflow. Weekends (red) are blocked. Today is outlined in blue; tick → green. Everything is saved to the cloud and shared with all buyers in real time.</div>
+<div class="cards">
+ <div class="card"><div class="v">29</div><div class="l">Active offers</div></div>
+ <div class="card b2"><div class="v">3</div><div class="l">Media buyers</div></div>
+ <div class="card b3"><div class="v">18</div><div class="l">Multi-flow offers</div></div>
+ <div class="card b4"><div class="v">81</div><div class="l">Total flows</div></div>
+</div>
+<h2>Rotation calendar · <span id="monthLabel">—</span></h2>
+<div class="filterbar">
+  <button class="navbtn" id="prevM">‹ Prev</button>
+  <select id="selMonth"></select>
+  <select id="selYear"></select>
+  <button class="navbtn" id="nextM">Next ›</button>
+  <button class="navbtn" id="todayM">Today</button>
+</div>
+<div class="wrap"><table><thead><tr><th>Day</th><th><span class='bav' style='background:#e1251b'>JC</span><span class='bnm'>Jacopo Cappelli</span></th><th><span class='bav' style='background:#3ba3ff'>ML</span><span class='bnm'>Michele Lucrezi</span></th><th><span class='bav' style='background:#f0a020'>UM</span><span class='bnm'>Ulysses Media</span></th></tr></thead><tbody>
+</tbody></table></div>
+<p class="sub">Click an offer in the calendar to see its flows and links.</p>
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+<div class="picker" id="picker">
+  <div class="phd"><b>Choose offer</b><button class="px" id="pickerClose">×</button></div>
+  <input class="psrch" id="pickerSearch" placeholder="Search offer..." autocomplete="off">
+  <div class="plist" id="pickerList"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const OFFERS={"1": {"name": "Certified Concealed First", "count": 4, "flows": [{"flow": "1 · Direct (JS SDK)", "url": "https://certifiedconcealed1st.com/?utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · Digistore", "url": "https://dg.certifiedconcealed1st.com/v2/validate.php?cid={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "3 · No VSL", "url": "https://dg.certifiedconcealed1st.com/validate.php?aff=Affiliateinternal&cid={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "NO VSL NEW FLOW", "url": "https://dg.certifiedconcealed1st.com/offer/validate.php?aff=Affiliateinternal&cid={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "2": {"name": "XENBURN TEMPLATE", "count": 1, "flows": [{"flow": "Default", "url": "https://www.xfnjwej33dd.com/84FBJ6G/64HTLW3/?sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "3": {"name": "GLP Patches", "count": 1, "flows": [{"flow": "Default", "url": "https://balancejourney.online/vsl-02-lead-01?f=qfhwua&aff_id=40754&subid2={transaction_id}&subid3={sub1}&subid5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "4": {"name": "LeviaPatch", "count": 1, "flows": [{"flow": "Default", "url": "https://www.qw6azlkjs2.com/S4RNWH8C/P8TJ7SR/?sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "5": {"name": "Wellaray Slimming Coffee Booster", "count": 2, "flows": [{"flow": "1 · Default", "url": "https://www.b7nmjklq4zx.com/S4RNWH8C/PD56JDT/?sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · EN DTC", "url": "https://www.b7nmjklq4zx.com/S4RNWH8C/PD56JDT/?uid=12414&sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "6": {"name": "Jetterix", "count": 3, "flows": [{"flow": "9569 · Product Page", "url": "https://bikiraibn.com/?a=3524&c=9569&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "9439 · DTC", "url": "https://bikiraibn.com/?a=3524&c=9439&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "9440 · LP", "url": "https://bikiraibn.com/?a=3524&c=9440&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "7": {"name": "Dermafix", "count": 3, "flows": [{"flow": "8701 · product page", "url": "https://domainoftheyear.com/?a=3524&c=8701&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "8702 · Check out", "url": "https://domainoftheyear.com/?a=3524&c=8702&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "8703 · DTC", "url": "https://domainoftheyear.com/?a=3524&c=8703&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "8": {"name": "Scientipeptides", "count": 1, "flows": [{"flow": "Default", "url": "https://www.p35bydds.com/262DXM/M2GJW/?sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "9": {"name": "Retatrutide", "count": 4, "flows": [{"flow": "retaapproval · Approval", "url": "https://qualify.retaclinic.com/retaapproval/?affid=549&sub1={transaction_id}&oid=912&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "1455 · V2 - 1 page flow", "url": "https://qualify.retaclinic.com/retacheckout/?affid=549&sub1={transaction_id}&oid=912&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "1658 · V2 - TH", "url": "https://qualify.retaclinic.com/retacheckoutd/?affid=549&sub1={transaction_id}&oid=912&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "1659 · V3 - DTC", "url": "https://qualify.retaclinic.com/retacheckoutreta1/?affid=549&sub1={transaction_id}&oid=912&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "10": {"name": "Social Profits Machine", "count": 5, "flows": [{"flow": "3 · Unify VSL 1", "url": "https://socialprofitsmachine.com/offer/?affId=wasabi&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "4 · Whop VSL 1", "url": "https://try-socialprofits.com/spm/offer?cid={transaction_id}&sv1={affiliate_id}&sv2={sub1}&affId=wasabi"}, {"flow": "1 · CC VSL 1", "url": "https://www.profitsmachines.com/offer?affId=wasabi&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "2 · CC VSL 2", "url": "https://www.profitsmachines.com/vsl2?affId=wasabi&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "5 · Whop VSL 2", "url": "https://try-socialprofits.com/spm-vsl2/offer?affId=wasabi&cid={transaction_id}&sv1={affiliate_id}&sv2={sub1}&sv3={sub2}&sv4={source_id}"}]}, "11": {"name": "SimProfits", "count": 2, "flows": [{"flow": "1 · Konnektive (Our mids)", "url": "https://simprofits.com/offer/discover-2.php?gate=K7vQ9mX2pL8zR4nT6wY3aB5cH1sD9fJ&c1={transaction_id}&c2={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · Digistore", "url": "https://dg.simprofits.com/offer/discover-2.php?gate=K7vQ9mX2pL8zR4nT6wY3aB5cH1sD9fJ&aff=hotlineblinging&cid={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "12": {"name": "Re4gen", "count": 10, "flows": [{"flow": "F1 · Landing (klow)", "url": "https://www.try-re4gen.com/klow?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F2 · Product page", "url": "https://www.try-re4gen.com/pp1?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F3 · Quiz male", "url": "https://men.try-re4gen.com/?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F3 · Quiz female age", "url": "https://age.try-re4gen.com/?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F3 · Quiz female beauty", "url": "https://beauty.try-re4gen.com/?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F4 · Quiz router", "url": "https://www.try-re4gen.com/quiz-router?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F4 · Angle skin", "url": "https://skin.try-re4gen.com/?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F4 · Angle gut", "url": "https://gut.try-re4gen.com/?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F4 · Angle energy", "url": "https://energy.try-re4gen.com/?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}, {"flow": "F4 · Angle recovery", "url": "https://recovery.try-re4gen.com/?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}&affId=wasabi&sourceId={source_id}&rtkclickid={sub1}&utm_campaign={sub2}&utm_content={sub3}"}]}, "13": {"name": "Watch Me Braid", "count": 1, "flows": [{"flow": "Default", "url": "https://www.watchmebraid.com/Product?c1={transaction_id}&c2={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "14": {"name": "AVERA Batana Hair Oil", "count": 1, "flows": [{"flow": "Default", "url": "https://www.averaofficialstore.com/product?c1={transaction_id}&c2={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "15": {"name": "Xenburn Wasabi", "count": 4, "flows": [{"flow": "1 · Home", "url": "https://buyxenburn.com/?aff_id=1255&subid2={transaction_id}&subid3={sub1}&subid5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · Version 1", "url": "https://buyxenburn.com/version1?aff_id=1255&subid2={transaction_id}&subid3={sub1}&subid5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "3 · Version 3", "url": "https://buyxenburn.com/version3?aff_id=1255&subid2={transaction_id}&subid3={sub1}&subid5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "4 · Version 4", "url": "https://buyxenburn.com/version4?aff_id=1255&subid2={transaction_id}&subid3={sub1}&subid5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "16": {"name": "AMALIA - The Italian Tarot Reader", "count": 5, "flows": [{"flow": "1 · Amalia - Flow 1", "url": "https://www.spiritualamalia.com/new-offer?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "2 · Pick A Card - Flow 2", "url": "https://www.spiritualamalia.com/lead?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "3 · Psychic Amalia - Flow 3", "url": "https://www.spiritualamalia.com/psychicamalia?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "4 · Offer", "url": "https://www.spiritualamalia.com/offer?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "Quiz flow - Pick One Card", "url": "https://www.spiritualamalia.com/pickonecard?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}]}, "17": {"name": "Hinuki Lean Habit Jelly Sticks - US (SS)", "count": 4, "flows": [{"flow": "1 · Base", "url": "https://www.b7nmjklq4zx.com/S4RNWH8C/PQ8GQJP/?sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · DTC", "url": "https://www.b7nmjklq4zx.com/S4RNWH8C/PQ8GQJP/?uid=13226&sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "3 · Advertorial 5 Reasons", "url": "https://www.b7nmjklq4zx.com/S4RNWH8C/PQ8GQJP/?uid=13227&sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "4 · Advertorial Discovery", "url": "https://www.b7nmjklq4zx.com/S4RNWH8C/PQ8GQJP/?uid=13228&sub2={transaction_id}&sub5={affiliate_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "18": {"name": "Certified Concealed First (Spanish)", "count": 2, "flows": [{"flow": "1 · Direct (JS SDK)", "url": "https://certifiedconcealed1st.com/?utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · Digistore", "url": "https://dg.certifiedconcealed1st.com/v2/validate.php?cid={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "19": {"name": "Amatro TrueWave", "count": 6, "flows": [{"flow": "1 · Hidden Benefits 4 v1", "url": "https://www.tryamatro.com/offer/hidden-benefits4-v1?affId=DreamOutcome&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "2 · Landing 1", "url": "https://www.tryamatro.com/offer/landing1t1?affId=DreamOutcome&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "3 · Advertorial T2", "url": "https://www.tryamatro.com/offer/amatro-truewave-t2?affId=DreamOutcome&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "4 · Melissa T4", "url": "https://www.tryamatro.com/offer/melissa-t4?affId=DreamOutcome&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "5 · Adv 7", "url": "https://www.tryamatro.com/offer/adv7?affId=DreamOutcome&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "6 · Store · Heat Cocoon", "url": "https://store.tryamatro.com/products/the-heat-cocoon?c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}]}, "20": {"name": "EverlySong", "count": 3, "flows": [{"flow": "1 · Home V1", "url": "https://www.everlysong.com/home?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "2 · Home V2", "url": "https://www.everlysong.com/home-landing?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "3 · Lead 9", "url": "https://www.everlysong.com/lead9?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}]}, "21": {"name": "VeinGuard - FR (SS)", "count": 1, "flows": [{"flow": "1 · Clean DTC", "url": "https://trk2success.com/?a=3524&c=10566&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "23": {"name": "BareEarth Grounding Bed Sheets - US/CA/AU/UK/IE/NZ (SS)", "count": 3, "flows": [{"flow": "1 · LP (9649)", "url": "https://bikiraibn.com/?a=3524&c=9649&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · DTC (9654)", "url": "https://bikiraibn.com/?a=3524&c=9654&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "3 · Product Page (9659)", "url": "https://bikiraibn.com/?a=3524&c=9659&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "24": {"name": "Melara Max pillow - INTL (smartlink)", "count": 2, "flows": [{"flow": "1 · Product Page (10840)", "url": "https://trk2success.com/?a=3524&c=10840&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · DTC (10841)", "url": "https://trk2success.com/?a=3524&c=10841&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "25": {"name": "Vanotium - INTL (smartlink)", "count": 3, "flows": [{"flow": "1 · Product Page (10845)", "url": "https://trk2success.com/?a=3524&c=10845&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "2 · LP (10846)", "url": "https://trk2success.com/?a=3524&c=10846&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}, {"flow": "3 · DTC (10847)", "url": "https://trk2success.com/?a=3524&c=10847&s2={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "26": {"name": "Ketorvex", "count": 1, "flows": [{"flow": "Default", "url": "https://www.tryketrovex.com/vsl?aff=Affiliateinternal&cid={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "27": {"name": "Clarivyon", "count": 1, "flows": [{"flow": "Default", "url": "https://www.clarivyon.com/vsl?aff=Affiliateinternal&cid={transaction_id}&utm_source=facebook&utm_medium=paid&utm_campaign={sub1}&utm_term={sub2}&utm_content={sub3}"}]}, "28": {"name": "Sativora", "count": 5, "flows": [{"flow": "1 · VSL", "url": "https://www.sativora.com/vsl?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "2 · Advertorial 1", "url": "https://www.sativora.com/adv1?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "3 · Advertorial 2", "url": "https://www.sativora.com/adv2?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "4 · Advertorial 3", "url": "https://www.sativora.com/adv3?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}, {"flow": "5 · Advertorial 4", "url": "https://www.sativora.com/adv4?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}]}, "29": {"name": "Certified Concealed 2OB", "count": 1, "flows": [{"flow": "Default", "url": "https://secure.concealedqualifyfirst.com/ob-2?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}]}, "30": {"name": "21 Days Challenge", "count": 1, "flows": [{"flow": "Default", "url": "https://21days.concealedtrainingfirst.com/PPM?affId=FD4F43B6&c1={transaction_id}&c2={affiliate_id}&c3={source_id}&c4={sub1}&c5={sub2}"}]}};
+
+// ===== MONTH VIEW + REAL ROTATION SEED (08-14/10/2026) =====
+const REAL={"2026-10-08":["1","10","19"],"2026-10-09":["2","11","20"],"2026-10-10":["3","12","21"],"2026-10-11":["4","13","23"],"2026-10-12":["5","14","24"],"2026-10-13":["6","15","25"],"2026-10-14":["7","16","26"]};
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const RANGE_START=new Date(2026,9,8);   // 08/10/2026 (first real day)
+const RANGE_END=new Date(2031,11,31);   // 31/12/2031
+const pad=n=>String(n).padStart(2,'0');
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+// stable per-day key so saved positions/launched state persist across month switches
+function dayKey(d){return ymd(d);}
+const tbody=document.querySelector('tbody');
+const selMonth=document.getElementById('selMonth');
+const selYear=document.getElementById('selYear');
+const monthLabel=document.getElementById('monthLabel');
+// populate selectors
+MONTHS.forEach((m,i)=>{const o=document.createElement('option');o.value=i;o.textContent=m;selMonth.appendChild(o);});
+for(let y=2026;y<=2031;y++){const o=document.createElement('option');o.value=y;o.textContent=y;selYear.appendChild(o);}
+let viewY, viewM;
+function defaultOffer(d,b){
+  const key=ymd(d);
+  if(REAL[key])return REAL[key][b];
+  return 'm:WASABIFY AI';
+}
+function renderMonth(y,m){
+  viewY=y;viewM=m;
+  selMonth.value=m;selYear.value=y;
+  monthLabel.textContent=MONTHS[m]+' '+y;
+  const todayStr=ymd(new Date());
+  let html='';
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  for(let dd=1;dd<=daysInMonth;dd++){
+    const d=new Date(y,m,dd);
+    if(d<RANGE_START||d>RANGE_END)continue;
+    const dow=DOWS[d.getDay()];
+    const isWeekend=(d.getDay()===0||d.getDay()===6);
+    const isToday=(ymd(d)===todayStr);
+    const cls=(isWeekend?'wk':'')+(isToday&&!isWeekend?' today':'');
+    const dnum=pad(dd)+'/'+pad(m+1);
+    const dk=dayKey(d);
+    let tds='';
+    for(let b=0;b<3;b++){
+      if(isWeekend){
+        tds+="<td><div class='cell blocked'><div class='blocked-lbl'>\u2014 weekend \u2014</div></div></td>";
+        continue;
+      }
+      const key=dk+'_'+b;
+      const off=defaultOffer(d,b);
+      tds+="<td><div class='cell"+(isToday?' today':'')+"' data-key='"+key+"' data-orig='"+off+"'>"+
+        "<div class='slots'></div>"+
+        "<button class='add-btn' title='Add another offer this day'>+ add offer</button>"+
+        "</div></td>";
+    }
+    html+="<tr class='"+cls.trim()+"'><td class='day'><span class='dow'>"+dow+"</span>"+
+      "<span class='dnum'>"+dnum+"</span></td>"+tds+"</tr>";
+  }
+  tbody.innerHTML=html;
+  wireMonth();
+}
+function clampView(y,m){
+  let t=y*12+m;
+  const min=2026*12+9;      // Oct 2026
+  const max=2031*12+11;     // Dec 2031
+  if(t<min)t=min; if(t>max)t=max;
+  return [Math.floor(t/12), t%12];
+}
+function goMonth(delta){
+  let t=viewY*12+viewM+delta;
+  const [y,m]=clampView(Math.floor(t/12),t%12);
+  renderMonth(y,m);
+}
+document.getElementById('prevM').addEventListener('click',()=>goMonth(-1));
+document.getElementById('nextM').addEventListener('click',()=>goMonth(1));
+document.getElementById('todayM').addEventListener('click',()=>{const n=new Date();const [y,m]=clampView(n.getFullYear(),n.getMonth());renderMonth(y,m);});
+selMonth.addEventListener('change',()=>renderMonth(+selYear.value,+selMonth.value));
+selYear.addEventListener('change',()=>renderMonth(+selYear.value,+selMonth.value));
+
+const ov=document.getElementById('ov'),modal=document.getElementById('modal');
+let cur=null;
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function isManual(id){return typeof id==='string'&&id.indexOf('m:')===0;}
+function manualName(id){return id.slice(2);}
+function renderChip(btn,id){
+  btn.dataset.off=id;
+  if(isManual(id)){
+    const nm=manualName(id);
+    btn.classList.add('manual');
+    btn.innerHTML='<span class="grip">☰</span><span class="oid">✎</span><span class="onm">'+esc(nm||'(empty)')+'</span><span class="fc">manual</span>';
+    return;
+  }
+  const o=OFFERS[id];if(!o)return;
+  btn.classList.remove('manual');
+  const fc=o.count>1?('<span class="fc">'+o.count+' flows</span>'):('<span class="fc one">1 flow</span>');
+  const u=everflowUrl(id);
+  const link=u?('<span class="offlink-in" data-url="'+u.replace(/"/g,'&quot;')+'" title="Open in Everflow">\u2197 Everflow</span>'):'';
+  btn.innerHTML='<span class="grip">☰</span><span class="oid">#'+id+'</span><span class="onm">'+esc(o.name)+'</span>'+fc+link;
+}
+// link Everflow dell'offerta (dashboard): l'ID offerta = numero #id del calendario
+const EVERFLOW_BASE='https://wasabi.everflowclient.io/offers/';
+function everflowUrl(id){
+  if(isManual(id))return '';          // offerte manuali: nessun link Everflow
+  if(OFFERS[id])return EVERFLOW_BASE+id;
+  return '';
+}
+function renderSlotLink(){/* link ora e' dentro il chip, nessuna azione */}
+function openOffer(id){
+  if(isManual(id)){
+    const nm=manualName(id);
+    modal.innerHTML='<div class="mhead"><span class="obadge">✎</span><h3>'+esc(nm||'(no name)')+'</h3>'+
+      '<span class="otag single">manual</span><button class="mx" onclick="closeOffer()">×</button></div>'+
+      '<div class="flow"><div class="fname">Manually entered offer — no Everflow flow linked.</div>'+
+      '<div class="sub" style="margin-top:6px">Click the ✎ button on the cell to edit the name.</div></div>';
+    ov.classList.add('open');cur=id;return;
+  }
+  const o=OFFERS[id];if(!o)return;
+  const tag=o.count>1?('multi'):('single');
+  let flows='';
+  o.flows.forEach((f,i)=>{
+    flows+=`<div class="flow"><div class="fname"><span class="fnum">${i+1}</span>${esc(f.flow)}</div>`+
+      `<div class="url"><code id="mu${i}">${esc(f.url)}</code><button class="cpy" data-t="mu${i}">copy</button></div></div>`;
+  });
+  modal.innerHTML=`<div class="mhead"><span class="obadge">#${id}</span><h3>${esc(o.name)}</h3>`+
+    `<span class="otag ${tag}">${o.count>1?o.count+' flows':'1 flow'}</span>`+
+    `<button class="mx" onclick="closeOffer()">×</button></div>${flows}`;
+  ov.classList.add('open');cur=id;
+  modal.querySelectorAll('.cpy').forEach(b=>b.addEventListener('click',()=>{
+    const t=document.getElementById(b.dataset.t);navigator.clipboard.writeText(t.textContent);
+    const x=b.textContent;b.textContent='copied';b.classList.add('ok');setTimeout(()=>{b.textContent=x;b.classList.remove('ok');},1200);
+  }));
+}
+function closeOffer(){ov.classList.remove('open');cur=null;}
+ov.addEventListener('click',e=>{if(e.target===ov)closeOffer();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOffer();});
+
+// ===== PERSISTENZA: Supabase (condivisa) + localStorage (cache / fallback) =====
+const LS_DONE='wasabi_schedule_done_v1';   // stato "lanciata" per slot (slotKey)
+const LS_POS ='wasabi_schedule_pos_v2';    // override offerta primaria: { cellKey: offerId }
+const LS_EXTRA='wasabi_schedule_extra_v1'; // slot aggiuntivi: { cellKey: [{sid,off},...] }
+let done={};try{done=JSON.parse(localStorage.getItem(LS_DONE))||{};}catch(e){done={};}
+let pos ={};try{pos =JSON.parse(localStorage.getItem(LS_POS ))||{};}catch(e){pos ={};}
+let extra={};try{extra=JSON.parse(localStorage.getItem(LS_EXTRA))||{};}catch(e){extra={};}
+function saveDone(){localStorage.setItem(LS_DONE,JSON.stringify(done));}
+function savePos(){localStorage.setItem(LS_POS,JSON.stringify(pos));}
+function saveExtra(){localStorage.setItem(LS_EXTRA,JSON.stringify(extra));}
+
+// --- Supabase: tabella public.schedule_kv (k text primary key, v jsonb) ---
+// chiavi: "pos:<cellKey>" -> offerId | "extra:<cellKey>" -> [{sid,off}] | "done:<slotKey>" -> true
+const SB_TABLE='schedule_kv';
+const CFG=window.SCHEDULE_CONFIG||{};
+let sb=null;
+if(window.supabase&&CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY&&/^https:\/\//.test(CFG.SUPABASE_URL)){
+  try{sb=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);}
+  catch(e){console.error('Supabase init failed',e);}
+}
+const syncBadge=document.getElementById('syncBadge');
+function setSync(state,msg){if(!syncBadge)return;syncBadge.className='sync '+state;syncBadge.textContent=msg;syncBadge.title=msg;}
+let pendingWrites=0;
+function remoteWrite(k,v){
+  if(!sb)return;
+  pendingWrites++;setSync('busy','Saving…');
+  const q=(v===undefined||v===null)
+    ? sb.from(SB_TABLE).delete().eq('k',k)
+    : sb.from(SB_TABLE).upsert({k,v,updated_at:new Date().toISOString()},{onConflict:'k'});
+  q.then(({error})=>{
+    pendingWrites=Math.max(0,pendingWrites-1);
+    if(error){console.error('Supabase write failed',k,error);setSync('err','Sync error: '+error.message);}
+    else if(pendingWrites===0)setSync('ok','Cloud synced');
+  });
+}
+function remoteDeletePrefix(prefix){
+  if(!sb)return;
+  pendingWrites++;setSync('busy','Saving…');
+  sb.from(SB_TABLE).delete().like('k',prefix+'%').then(({error})=>{
+    pendingWrites=Math.max(0,pendingWrites-1);
+    if(error){console.error('Supabase delete failed',prefix,error);setSync('err','Sync error: '+error.message);}
+    else if(pendingWrites===0)setSync('ok','Cloud synced');
+  });
+}
+// salvataggi granulari: cache locale + riga remota
+function persistPos(ck){savePos();remoteWrite('pos:'+ck,pos[ck]);}
+function persistExtra(ck){saveExtra();remoteWrite('extra:'+ck,(extra[ck]&&extra[ck].length)?extra[ck]:undefined);}
+function persistDone(k){saveDone();remoteWrite('done:'+k,done[k]?true:undefined);}
+// applica una riga remota allo stato locale; ritorna la cellKey interessata
+function applyRow(k,v){
+  const i=k.indexOf(':');if(i<0)return null;
+  const kind=k.slice(0,i),key=k.slice(i+1);
+  if(kind==='pos'){if(v===undefined||v===null)delete pos[key];else pos[key]=v;return key;}
+  if(kind==='extra'){if(!Array.isArray(v)||!v.length)delete extra[key];else extra[key]=v;return key;}
+  if(kind==='done'){if(v)done[key]=1;else delete done[key];return key.split('~')[0];}
+  return null;
+}
+async function loadRemote(){
+  if(!sb){setSync('local','Local only (Supabase not configured)');return;}
+  setSync('busy','Loading…');
+  const {data,error}=await sb.from(SB_TABLE).select('k,v');
+  if(error){console.error('Supabase load failed',error);setSync('err','Sync error: '+error.message);return;}
+  if(!data.length){
+    // primo avvio del DB: carica su Supabase quello che c'era in localStorage
+    const rows=[];
+    Object.keys(pos).forEach(ck=>rows.push({k:'pos:'+ck,v:pos[ck]}));
+    Object.keys(extra).forEach(ck=>{if(extra[ck]&&extra[ck].length)rows.push({k:'extra:'+ck,v:extra[ck]});});
+    Object.keys(done).forEach(k=>{if(done[k])rows.push({k:'done:'+k,v:true});});
+    if(rows.length){
+      const r=await sb.from(SB_TABLE).upsert(rows,{onConflict:'k'});
+      if(r.error){console.error('Supabase seed failed',r.error);setSync('err','Sync error: '+r.error.message);return;}
+    }
+  }else{
+    done={};pos={};extra={};
+    data.forEach(r=>applyRow(r.k,r.v));
+    saveDone();savePos();saveExtra();
+  }
+  setSync('ok','Cloud synced');
+  // realtime: quando un altro buyer modifica, aggiorna la cella interessata
+  sb.channel('schedule_kv_changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:SB_TABLE},payload=>{
+      const isDel=payload.eventType==='DELETE';
+      const row=isDel?payload.old:payload.new;
+      if(!row||!row.k)return;
+      const ck=applyRow(row.k,isDel?undefined:row.v);
+      saveDone();savePos();saveExtra();
+      if(!ck)return;
+      const cell=document.querySelector('.cell[data-key="'+ck+'"]');
+      if(cell&&!(editing&&cellOf(editing)===cell)&&!(pickerSlot&&cellOf(pickerSlot)===cell))rebuildCellSlots(cell);
+      else refreshDone();
+    })
+    .subscribe(status=>{if(status==='CHANNEL_ERROR')console.warn('Supabase realtime unavailable');});
+}
+
+let cells=[]; // live list for the currently rendered month
+
+// ----- helpers slot -----
+function cellOf(slot){return slot.closest('.cell');}
+function slotKey(slot){return slot.dataset.slotkey;}
+function isPrimary(slot){return slot.dataset.idx==='0';}
+// salva l'offerta scelta per uno slot
+function storeSlotOffer(slot,id){
+  const cell=cellOf(slot), ck=cell.dataset.key, idx=+slot.dataset.idx, sid=slot.dataset.sid;
+  if(idx===0){pos[ck]=id;persistPos(ck);}
+  else{
+    if(!extra[ck])extra[ck]=[];
+    const e=extra[ck].find(x=>x&&x.sid===sid);
+    if(e)e.off=id; else extra[ck].push({sid:sid||newSid(ck),off:id});
+    persistExtra(ck);
+  }
+}
+// aggiorna lo stato visivo "lanciata" (per slot) sul mese visibile
+function refreshDone(){
+  document.querySelectorAll('.slot').forEach(slot=>{
+    const k=slotKey(slot), chk=slot.querySelector('.chk');
+    if(done[k]){chk.checked=true;slot.classList.add('done');}
+    else{chk.checked=false;slot.classList.remove('done');}
+  });
+}
+
+// scambia l'offerta primaria fra due celle (drag funziona sullo slot primario)
+function swap(slotA,slotB){
+  if(slotA===slotB)return;
+  const a=slotA.querySelector('.chip').dataset.off;
+  const b=slotB.querySelector('.chip').dataset.off;
+  renderChip(slotA.querySelector('.chip'),b);renderSlotLink(slotA,b);
+  renderChip(slotB.querySelector('.chip'),a);renderSlotLink(slotB,a);
+  storeSlotOffer(slotA,b);
+  storeSlotOffer(slotB,a);
+}
+
+// ===== EDITING MANUALE (doppio click) =====
+let editing=null;
+function startEdit(slot){
+  if(editing)return;
+  editing=slot;slot.classList.add('editing');
+  const chip=slot.querySelector('.chip');
+  const onm=chip.querySelector('.onm');
+  const id=chip.dataset.off;
+  const current=isManual(id)?manualName(id):(OFFERS[id]?OFFERS[id].name:'');
+  onm.textContent=current;
+  onm.setAttribute('contenteditable','true');
+  onm.focus();
+  const r=document.createRange();r.selectNodeContents(onm);
+  const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
+  function finish(save){
+    onm.removeAttribute('contenteditable');
+    slot.classList.remove('editing');
+    onm.removeEventListener('keydown',onKey);
+    onm.removeEventListener('blur',onBlur);
+    editing=null;
+    if(save){
+      const txt=onm.textContent.trim();
+      if(txt===''){ // vuoto = ripristina originale dello slot
+        const orig=originalOffer(slot);renderChip(chip,orig);storeSlotOffer(slot,orig);
+      }else{
+        const newId='m:'+txt;
+        renderChip(chip,newId);storeSlotOffer(slot,newId);
+      }
+    }else{
+      renderChip(chip,id); // annulla
+    }
+  }
+  function onKey(e){
+    if(e.key==='Enter'){e.preventDefault();finish(true);}
+    else if(e.key==='Escape'){e.preventDefault();finish(false);}
+  }
+  function onBlur(){finish(true);}
+  onm.addEventListener('keydown',onKey);
+  onm.addEventListener('blur',onBlur);
+}
+// offerta originale dello slot: primario = default del giorno; extra = WASABIFY
+function originalOffer(slot){
+  if(isPrimary(slot))return cellOf(slot).dataset.orig||'m:WASABIFY AI';
+  return 'm:WASABIFY AI';
+}
+// ===== OFFER PICKER (dropdown + search) =====
+const picker=document.getElementById('picker');
+const pickerSearch=document.getElementById('pickerSearch');
+const pickerList=document.getElementById('pickerList');
+let pickerSlot=null;
+let scheduledMap={}; // offerId -> info sulla scheduling nella stessa colonna buyer
+// lista ordinata delle offerte Everflow (per id numerico)
+const OFFER_IDS=Object.keys(OFFERS).sort((a,b)=>(+a)-(+b));
+// nomi dei buyer dall'intestazione tabella (una th per buyer, salto la prima 'Day')
+const BUYER_NAMES=[...document.querySelectorAll('thead th')].slice(1).map(th=>{
+  const n=th.querySelector('.bnm');return n?n.textContent.trim():th.textContent.trim();
+});
+// key format: YYYY-MM-DD_b  -> buyer = ultimo campo, data = resto
+function buyerOf(cell){const p=cell.dataset.key.split('_');return p[p.length-1];}
+function dateOfKey(key){return key.slice(0,10);} // YYYY-MM-DD
+function prettyDay(key){const d=dateOfKey(key).split('-');return d[2]+'/'+d[1]+'/'+d[0].slice(2);}
+// offerta effettiva per una data+buyer (pos salvato oppure default reale/WASABIFY)
+function offerForKey(key,dstr,b){
+  if(pos[key]!==undefined)return pos[key];
+  if(REAL[dstr])return REAL[dstr][b];
+  return 'm:WASABIFY AI';
+}
+// raccoglie le offerte reali gia presenti nella colonna di questo buyer su TUTTO il calendario
+// (include slot primario + slot extra di ogni giorno)
+function collectScheduled(slot){
+  const cell=cellOf(slot), b=+buyerOf(cell), curKey=slotKey(slot), map={};
+  for(let d=new Date(RANGE_START); d<=RANGE_END; d.setDate(d.getDate()+1)){
+    if(d.getDay()===0||d.getDay()===6)continue; // weekend bloccati
+    const dstr=ymd(d), ck=dstr+'_'+b;
+    const list=[{sk:ck,off:offerForKey(ck,dstr,b)}];
+    (extra[ck]||[]).forEach(x=>{
+      if(!x)return;
+      const off=typeof x==='string'?x:x.off;        // tollera vecchio formato
+      const sid=typeof x==='string'?null:x.sid;
+      list.push({sk:ck+'~'+(sid||'?'),off});
+    });
+    list.forEach(it=>{
+      if(!it.off||isManual(it.off))return;
+      if(!map[it.off])map[it.off]={days:[],self:false};
+      map[it.off].days.push(prettyDay(ck));
+      if(it.sk===curKey)map[it.off].self=true;
+    });
+  }
+  return map;
+}
+
+function setOffer(slot,id){
+  const chip=slot.querySelector('.chip');
+  renderChip(chip,id);
+  renderSlotLink(slot,id);
+  storeSlotOffer(slot,id);
+  refreshDone();
+}
+function clearOffer(slot){
+  const chip=slot.querySelector('.chip');
+  const orig=originalOffer(slot);
+  renderChip(chip,orig);
+  renderSlotLink(slot,orig);
+  storeSlotOffer(slot,orig);
+}
+function renderPickerList(q){
+  q=(q||'').trim().toLowerCase();
+  let html='';
+  // intestazione: offerte gia schedulate per questo buyer (escludo la casella corrente)
+  const sched=Object.keys(scheduledMap).filter(id=>!isManual(id)&&OFFERS[id]);
+  if(sched.length){
+    html+='<div class="phint">Green = already in this buyer\u2019s calendar</div>';
+  }
+  const matches=OFFER_IDS.filter(id=>{
+    const o=OFFERS[id];
+    return !q || o.name.toLowerCase().includes(q) || ('#'+id).includes(q);
+  });
+  // ordina: prima le gia schedulate, poi il resto (mantengo ordine id dentro i gruppi)
+  matches.sort((a,b)=>{
+    const sa=scheduledMap[a]?1:0, sb=scheduledMap[b]?1:0;
+    if(sa!==sb)return sb-sa;
+    return (+a)-(+b);
+  });
+  matches.forEach(id=>{
+    const o=OFFERS[id];
+    const fc=o.count>1?(o.count+' flows'):'1 flow';
+    const info=scheduledMap[id];
+    let cls='pitem', tag='';
+    if(info){
+      const otherDays=info.days.filter((d,i)=>true); // tutti i giorni in cui compare
+      if(info.self && info.days.length===1){cls+=' current';tag='<span class="ptag">current</span>';}
+      else{cls+=' scheduled';tag='<span class="ptag">'+otherDays.join(', ')+'</span>';}
+    }
+    html+='<div class="'+cls+'" data-pick="'+id+'"><span class="pid">#'+id+'</span>'+
+      '<span class="pnm">'+esc(o.name)+'</span>'+(tag||'<span class="pfc">'+fc+'</span>')+'</div>';
+  });
+  if(!matches.length) html+='<div class="pempty">No Everflow offer found.</div>';
+  // opzioni extra
+  if(q) html+='<div class="pitem manualrow" data-custom="1">✎ Use “'+esc(q)+'” as custom name</div>';
+  else html+='<div class="pitem manualrow" data-custom="1">✎ Type a custom name…</div>';
+  html+='<div class="pitem manualrow" data-clear="1" style="color:var(--mut)">↺ Restore original offer</div>';
+  pickerList.innerHTML=html;
+}
+function openPicker(slot,anchorBtn){
+  pickerSlot=slot;
+  scheduledMap=collectScheduled(slot);
+  const bn=BUYER_NAMES[+buyerOf(cellOf(slot))]||'';
+  const hd=picker.querySelector('.phd b');
+  if(hd)hd.textContent=bn?('Choose offer \u00b7 '+bn):'Choose offer';
+  renderPickerList('');
+  picker.classList.add('open');
+  // posiziona vicino al bottone
+  const r=anchorBtn.getBoundingClientRect();
+  let left=r.right-340; if(left<8)left=8;
+  let top=r.bottom+6;
+  const ph=Math.min(360,window.innerHeight-20);
+  if(top+ph>window.innerHeight) top=Math.max(8,r.top-ph-6);
+  picker.style.left=left+'px';picker.style.top=top+'px';
+  pickerSearch.value='';pickerSearch.focus();
+}
+function closePicker(){picker.classList.remove('open');pickerSlot=null;}
+pickerSearch.addEventListener('input',()=>renderPickerList(pickerSearch.value));
+pickerSearch.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closePicker();}
+  else if(e.key==='Enter'){
+    const first=pickerList.querySelector('.pitem[data-pick]');
+    if(first){setOffer(pickerSlot,first.dataset.pick);closePicker();}
+    else{const txt=pickerSearch.value.trim();if(txt){setOffer(pickerSlot,'m:'+txt);closePicker();}}
+  }
+});
+pickerList.addEventListener('click',e=>{
+  const it=e.target.closest('.pitem');if(!it||!pickerSlot)return;
+  if(it.dataset.pick){setOffer(pickerSlot,it.dataset.pick);closePicker();}
+  else if(it.dataset.clear){clearOffer(pickerSlot);closePicker();}
+  else if(it.dataset.custom){
+    const txt=pickerSearch.value.trim();
+    if(txt){setOffer(pickerSlot,'m:'+txt);closePicker();}
+    else{const s=pickerSlot;closePicker();startEdit(s);} // nome vuoto -> edit inline
+  }
+});
+document.getElementById('pickerClose').addEventListener('click',closePicker);
+document.addEventListener('pointerdown',e=>{
+  if(picker.classList.contains('open') && !picker.contains(e.target) && !e.target.classList.contains('edit-btn'))closePicker();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&picker.classList.contains('open'))closePicker();});
+
+// ===== DRAG & DROP (mouse + touch unificati con Pointer Events) =====
+let dragCell=null, ghost=null, startX=0, startY=0, moved=false;
+const DRAG_THRESHOLD=6;
+
+function onPointerDown(e){
+  if(editing)return; // niente drag mentre si edita
+  // click sul link Everflow dentro la card: apri e non avviare drag
+  const lk=e.target.closest('.offlink-in');
+  if(lk){e.stopPropagation();e.preventDefault();const u=lk.dataset.url;if(u)window.open(u,'_blank','noopener');return;}
+  const chip=e.target.closest('.chip');
+  if(!chip)return;
+  // ignora click sulla checkbox
+  if(e.target.classList.contains('chk'))return;
+  dragCell=chip.closest('.slot');
+  startX=e.clientX;startY=e.clientY;moved=false;
+  chip.setPointerCapture&&chip.setPointerCapture(e.pointerId);
+  window.addEventListener('pointermove',onPointerMove);
+  window.addEventListener('pointerup',onPointerUp);
+}
+function makeGhost(chip){
+  const r=chip.getBoundingClientRect();
+  ghost=chip.cloneNode(true);
+  ghost.style.position='fixed';ghost.style.pointerEvents='none';ghost.style.zIndex='999';
+  ghost.style.width=r.width+'px';ghost.style.opacity='.9';
+  ghost.style.boxShadow='0 12px 30px #000b';ghost.style.transform='scale(1.03)';
+  document.body.appendChild(ghost);
+}
+function moveGhost(x,y){
+  if(!ghost)return;
+  ghost.style.left=(x+12)+'px';ghost.style.top=(y+8)+'px';
+}
+function cellUnder(x,y){
+  const el=document.elementFromPoint(x,y);
+  return el?el.closest('.slot'):null;
+}
+let lastOver=null;
+function onPointerMove(e){
+  if(!dragCell)return;
+  const dx=e.clientX-startX, dy=e.clientY-startY;
+  if(!moved && Math.hypot(dx,dy)<DRAG_THRESHOLD)return;
+  if(!moved){
+    moved=true;
+    dragCell.classList.add('dragging');
+    makeGhost(dragCell.querySelector('.chip'));
+  }
+  e.preventDefault&&e.preventDefault();
+  moveGhost(e.clientX,e.clientY);
+  const over=cellUnder(e.clientX,e.clientY);
+  if(over!==lastOver){
+    if(lastOver)lastOver.classList.remove('dragover');
+    if(over&&over!==dragCell)over.classList.add('dragover');
+    lastOver=over;
+  }
+}
+function onPointerUp(e){
+  window.removeEventListener('pointermove',onPointerMove);
+  window.removeEventListener('pointerup',onPointerUp);
+  if(ghost){ghost.remove();ghost=null;}
+  if(lastOver)lastOver.classList.remove('dragover');
+  if(dragCell)dragCell.classList.remove('dragging');
+  if(moved){
+    const target=cellUnder(e.clientX,e.clientY);
+    if(target&&target!==dragCell){swap(dragCell,target);refreshDone();}
+  }
+  // click puro: nessun popup (il link diretto e' sotto il nome)
+  dragCell=null;lastOver=null;moved=false;
+}
+// ===== COSTRUZIONE SLOT =====
+// extra[ck] = [{sid, off}]  (sid = id stabile, non cambia quando rimuovi in mezzo)
+// migrazione da vecchio formato (array di stringhe) -> {sid,off}
+function migrateExtra(ck){
+  const arr=extra[ck];if(!arr||!arr.length)return;
+  if(typeof arr[0]==='string'){
+    extra[ck]=arr.map((off,i)=>({sid:'s'+(i+1),off}));
+    // migra anche le done key vecchie ck~1,ck~2 -> ck~s1,ck~s2
+    arr.forEach((off,i)=>{
+      const oldK=ck+'~'+(i+1), newK=ck+'~s'+(i+1);
+      if(done[oldK]){done[newK]=1;delete done[oldK];persistDone(newK);}
+    });
+    persistExtra(ck);saveDone();
+  }
+}
+function newSid(ck){
+  let n=1;const used=new Set((extra[ck]||[]).map(x=>x.sid));
+  while(used.has('s'+n))n++;return 's'+n;
+}
+function buildSlot(cell, idx, offerId, sid){
+  const ck=cell.dataset.key;
+  const sk=idx===0?ck:(ck+'~'+sid);
+  const slot=document.createElement('div');
+  slot.className='slot'+(idx>0?' extra':'');
+  slot.dataset.idx=idx;slot.dataset.slotkey=sk;if(sid)slot.dataset.sid=sid;
+  slot.innerHTML="<input type='checkbox' class='chk' data-key='"+sk+"' title='Mark as launched'>"+
+    "<button class='rm-btn' title='Remove this offer'>\u2715</button>"+
+    "<button class='edit-btn' title='Choose / edit offer'>\u270e</button>"+
+    "<button class='chip' data-off='"+offerId+"'></button>";
+  const chip=slot.querySelector('.chip');
+  renderChip(chip,offerId);
+  chip.addEventListener('pointerdown',onPointerDown);
+  const editBtn=slot.querySelector('.edit-btn');
+  editBtn.addEventListener('pointerdown',e=>e.stopPropagation());
+  editBtn.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();openPicker(slot,editBtn);});
+  const rmBtn=slot.querySelector('.rm-btn');
+  rmBtn.addEventListener('pointerdown',e=>e.stopPropagation());
+  rmBtn.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();removeSlot(slot);});
+  const chk=slot.querySelector('.chk');
+  chk.addEventListener('change',()=>{
+    const k=chk.dataset.key;
+    if(chk.checked){done[k]=1;slot.classList.add('done');}else{delete done[k];slot.classList.remove('done');}
+    persistDone(k);
+  });
+  chk.addEventListener('pointerdown',e=>e.stopPropagation());
+  return slot;
+}
+function addSlot(cell){
+  const ck=cell.dataset.key;
+  migrateExtra(ck);
+  if(!extra[ck])extra[ck]=[];
+  const sid=newSid(ck);
+  extra[ck].push({sid,off:'m:WASABIFY AI'});persistExtra(ck);
+  const idx=extra[ck].length;
+  const slot=buildSlot(cell,idx,'m:WASABIFY AI',sid);
+  cell.querySelector('.slots').appendChild(slot);
+  refreshDone();
+}
+function removeSlot(slot){
+  const cell=cellOf(slot), ck=cell.dataset.key, idx=+slot.dataset.idx, sid=slot.dataset.sid;
+  if(idx===0)return; // il primario non si rimuove
+  delete done[slot.dataset.slotkey];persistDone(slot.dataset.slotkey); // solo la spunta di QUESTO slot
+  if(extra[ck]){extra[ck]=extra[ck].filter(x=>x.sid!==sid);if(!extra[ck].length)delete extra[ck];persistExtra(ck);}
+  rebuildCellSlots(cell);
+}
+// ricostruisce tutti gli slot di una cella (primario + extra) dallo storage
+function rebuildCellSlots(cell){
+  const ck=cell.dataset.key;
+  migrateExtra(ck);
+  const cont=cell.querySelector('.slots');
+  cont.innerHTML='';
+  const primary=pos[ck]!==undefined?pos[ck]:(cell.dataset.orig||'m:WASABIFY AI');
+  cont.appendChild(buildSlot(cell,0,primary));
+  (extra[ck]||[]).forEach((x,i)=>cont.appendChild(buildSlot(cell,i+1,(x&&x.off)||'m:WASABIFY AI',x&&x.sid)));
+  refreshDone();
+}
+// ===== WIRE: (ri)costruisce gli slot ogni volta che si rende un mese =====
+function wireMonth(){
+  cells=[...document.querySelectorAll('.cell')].filter(c=>!c.classList.contains('blocked'));
+  cells.forEach(cell=>{
+    rebuildCellSlots(cell);
+    const add=cell.querySelector('.add-btn');
+    if(add){
+      add.addEventListener('pointerdown',e=>e.stopPropagation());
+      add.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();addSlot(cell);});
+    }
+  });
+  refreshDone();
+}
+
+// reset ordine (azzera tutti gli override, torna ai default)
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(!confirm('Restore all original offers? WASABIFY placeholders come back; the "launched" status stays.'))return;
+  pos={};savePos();remoteDeletePrefix('pos:');
+  renderMonth(viewY,viewM);
+});
+
+// ===== AVVIO: mostra subito la cache locale, poi carica da Supabase e ri-renderizza =====
+(function(){
+  const n=new Date();
+  const [y,m]=clampView(n.getFullYear(),n.getMonth());
+  renderMonth(y,m);
+  loadRemote().then(()=>renderMonth(viewY,viewM)).catch(e=>{console.error(e);setSync('err','Sync error');});
+})();
+</script>
+</body></html>
