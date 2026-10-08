@@ -1,0 +1,9 @@
+{
+  "name": "wasabi-offer-schedule",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Offer Schedule - Media Buyer (static site, Supabase sync)",
+  "scripts": {
+    "build": "echo \"static site - nothing to build\""
+  }
+}
