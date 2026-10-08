@@ -1,6 +1,8 @@
 [build]
   # Sito statico: sovrascrive l'eventuale "npm run build" impostato nella UI di Netlify
-  command = "echo 'static site - no build step'"
+  # Copia anche in .next: il plugin Next.js (installato dalla UI del progetto)
+  # forza ".next" come cartella di deploy; così la trova piena invece che assente.
+  command = "mkdir -p .next && cp index.html config.js .next/"
   publish = "."
 
 # Il progetto Netlify ha il plugin Next.js installato dalla UI (ereditato dal
